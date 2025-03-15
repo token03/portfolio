@@ -2,48 +2,20 @@ import "./App.css";
 
 function App() {
   return (
-    <div className="main-container" style={{ width: "50vw" }}>
+    <div className="main-container">
       <section className="about-me">
-        <h3 style={{ textAlign: "left", margin: 0 }}>hi im</h3>
-        <h1
-          style={{
-            textAlign: "left",
-            margin: 0,
-            fontFamily: "Georgia, serif",
-            textDecoration: "underline",
-            textDecorationThickness: "2px",
-          }}
-        >
-          jessie zhong
-        </h1>
-        <h3 style={{ textAlign: "left", marginTop: 10 }}>
-          third year cs @ ubc
-        </h3>
+        <h3 className="left-text small-margin">hi im</h3>
+        <h1 className="left-text underlined-title">jessie zhong</h1>
+        <h3 className="left-text top-margin">third year cs @ ubc</h3>
       </section>
       <section className="projects">
-        <h2
-          style={{
-            textAlign: "right",
-            textDecoration: "underline",
-            textDecorationThickness: "2px",
-          }}
-        >
-          projects
-        </h2>
+        <h2 className="right-text underlined-title">projects</h2>
         <div className="project"></div>
         <div className="project"></div>
         <div className="project"></div>
       </section>
       <section className="sections">
-        <h2
-          style={{
-            textAlign: "right",
-            textDecoration: "underline",
-            textDecorationThickness: "2px",
-          }}
-        >
-          experience
-        </h2>
+        <h2 className="right-text underlined-title">experience</h2>
         <div className="emonster"></div>
         <div className="mastercard"></div>
         <div className="mastercard"></div>
