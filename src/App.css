@@ -1,48 +1,13 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
 .main-container {
-  width: 50vw;
+  max-width: 700px;
+  margin: 0 auto;
+  width: 90%;
+  border: 1px solid #fff;
+  padding: 1.5rem;
+}
+
+section + section {
+  margin-top: 2rem;
 }
 
 .left-text {
@@ -54,19 +19,41 @@
 }
 
 .small-margin {
-  margin: 0;
+  margin-top: 0.1rem;
+  margin-bottom: 0.1rem;
 }
 
 .top-margin {
-  margin-top: 10px;
+  margin-top: 1rem;
 }
 
 .underlined-title {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  margin: 0; /* For h1 in about-me */
+  border-bottom: 1px dashed #888;
+  padding-bottom: 0.25rem;
+  margin-bottom: 0.75rem;
+  display: inline-block;
+  margin-top: 0;
 }
 
 .about-me h1 {
-  font-family: "Georgia, serif";
+  text-transform: lowercase;
+}
+
+.about-me h3 {
+  color: #ccc;
+  text-transform: lowercase;
+}
+
+.projects h3,
+.sections h3 {
+}
+
+.projects h3::before {
+  content: "* ";
+  color: #888;
+}
+
+.sections h3::before {
+  content: "* ";
+  color: #888;
 }
