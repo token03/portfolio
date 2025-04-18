@@ -32,18 +32,23 @@ const RainEffect: React.FC<RainEffectProps> = ({ coverRef }) => {
   const impactsRef = useRef<Impact[]>([]);
   const animationFrameId = useRef<number | null>(null);
   const coverRectRef = useRef<DOMRect | null>(null);
+  const lastTimeRef = useRef<number | null>(null);
+  const dropAccumulatorRef = useRef(0);
   const [, setCoverRectState] = useState<DOMRect | null>(null);
 
   const RAIN_COLOR = "rgba(220, 220, 235, 0.7)";
   const IMPACT_STROKE_COLOR = "rgba(230, 230, 245, 0.65)";
-  const NUM_DROPS_PER_FRAME = 3;
-  const MIN_SPEED = 9;
-  const MAX_SPEED = 13;
+
+  const DROPS_PER_SECOND = 180;
+  const MIN_SPEED_PER_SEC = 540;
+  const MAX_SPEED_PER_SEC = 780;
+  const IMPACT_GROW_SPEED_PER_SEC = 24;
+  const IMPACT_FADE_SPEED_PER_SEC = 3.6;
+
   const MIN_LENGTH = 12;
   const MAX_LENGTH = 22;
   const MIN_DROP_WIDTH = 1.0;
   const MAX_DROP_WIDTH = 1.8;
-
   const SPLASH_CHANCE = 0.4;
   const MIN_SPLASH_LENGTH = 5;
   const MAX_SPLASH_LENGTH = 10;
@@ -52,8 +57,6 @@ const RainEffect: React.FC<RainEffectProps> = ({ coverRef }) => {
   const SPLASH_ANGLE_SPREAD_COVER = Math.PI * 0.6;
   const SPLASH_ANGLE_SPREAD_GROUND = Math.PI * 1.2;
   const SPLASH_BASE_ANGLE = 1.5 * Math.PI;
-  const IMPACT_GROW_SPEED = 0.4;
-  const IMPACT_FADE_SPEED = 0.06;
   const IMPACT_MIN_WIDTH = 0.8;
   const IMPACT_MAX_WIDTH = 1.0;
 
@@ -123,8 +126,21 @@ const RainEffect: React.FC<RainEffectProps> = ({ coverRef }) => {
 
     if (!raindropsRef.current) raindropsRef.current = [];
     if (!impactsRef.current) impactsRef.current = [];
+    lastTimeRef.current = null;
+    dropAccumulatorRef.current = 0;
 
-    const animate = () => {
+    const animate = (currentTime: number) => {
+      if (lastTimeRef.current === null) {
+        lastTimeRef.current = currentTime;
+        animationFrameId.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      const deltaTimeMs = currentTime - lastTimeRef.current;
+      lastTimeRef.current = currentTime;
+
+      const dt = Math.min(deltaTimeMs / 1000, 1 / 30);
+
       const currentCtx = canvasRef.current?.getContext("2d");
       const currentCanvas = canvasRef.current;
       const currentCoverRect = coverRectRef.current;
@@ -141,16 +157,24 @@ const RainEffect: React.FC<RainEffectProps> = ({ coverRef }) => {
 
       currentCtx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-      for (let i = 0; i < NUM_DROPS_PER_FRAME; i++) {
-        raindropsRef.current.push({
-          x: Math.random() * canvasWidth,
-          y: -Math.random() * 50 - MAX_LENGTH,
-          length: MIN_LENGTH + Math.random() * (MAX_LENGTH - MIN_LENGTH),
-          velocityY: MIN_SPEED + Math.random() * (MAX_SPEED - MIN_SPEED),
-          opacity: 0.6 + Math.random() * 0.4,
-          lineWidth:
-            MIN_DROP_WIDTH + Math.random() * (MAX_DROP_WIDTH - MIN_DROP_WIDTH),
-        });
+      dropAccumulatorRef.current += DROPS_PER_SECOND * dt;
+      const dropsToCreate = Math.floor(dropAccumulatorRef.current);
+      if (dropsToCreate > 0) {
+        dropAccumulatorRef.current -= dropsToCreate;
+        for (let i = 0; i < dropsToCreate; i++) {
+          raindropsRef.current.push({
+            x: Math.random() * canvasWidth,
+            y: -Math.random() * 50 - MAX_LENGTH,
+            length: MIN_LENGTH + Math.random() * (MAX_LENGTH - MIN_LENGTH),
+            velocityY:
+              MIN_SPEED_PER_SEC +
+              Math.random() * (MAX_SPEED_PER_SEC - MIN_SPEED_PER_SEC),
+            opacity: 0.6 + Math.random() * 0.4,
+            lineWidth:
+              MIN_DROP_WIDTH +
+              Math.random() * (MAX_DROP_WIDTH - MIN_DROP_WIDTH),
+          });
+        }
       }
 
       const nextDrops: Raindrop[] = [];
@@ -158,7 +182,7 @@ const RainEffect: React.FC<RainEffectProps> = ({ coverRef }) => {
       currentCtx.lineCap = "round";
 
       for (const drop of raindropsRef.current) {
-        drop.y += drop.velocityY;
+        drop.y += drop.velocityY * dt;
 
         let hitSomething = false;
         let impactY = canvasHeight;
@@ -183,6 +207,7 @@ const RainEffect: React.FC<RainEffectProps> = ({ coverRef }) => {
         }
 
         if (drop.y > canvasHeight + MAX_LENGTH) {
+          // don't remove this; for eslint
         } else if (hitSomething) {
           if (Math.random() <= SPLASH_CHANCE) {
             const numLines = Math.floor(
@@ -238,13 +263,13 @@ const RainEffect: React.FC<RainEffectProps> = ({ coverRef }) => {
 
       for (const impact of impactsRef.current) {
         if (!impact.isFading) {
-          impact.currentLength += IMPACT_GROW_SPEED;
+          impact.currentLength += IMPACT_GROW_SPEED_PER_SEC * dt;
           if (impact.currentLength >= impact.maxLength) {
             impact.currentLength = impact.maxLength;
             impact.isFading = true;
           }
         } else {
-          impact.opacity -= IMPACT_FADE_SPEED;
+          impact.opacity -= IMPACT_FADE_SPEED_PER_SEC * dt;
         }
 
         if (impact.opacity > 0) {
@@ -270,7 +295,6 @@ const RainEffect: React.FC<RainEffectProps> = ({ coverRef }) => {
       impactsRef.current = nextImpacts;
 
       currentCtx.globalAlpha = 1.0;
-
       animationFrameId.current = requestAnimationFrame(animate);
     };
 
@@ -281,10 +305,14 @@ const RainEffect: React.FC<RainEffectProps> = ({ coverRef }) => {
         cancelAnimationFrame(animationFrameId.current);
       }
       animationFrameId.current = null;
+      raindropsRef.current = [];
+      impactsRef.current = [];
+      lastTimeRef.current = null;
+      dropAccumulatorRef.current = 0;
     };
   }, [
-    SPLASH_ANGLE_SPREAD_GROUND,
     SPLASH_ANGLE_SPREAD_COVER,
+    SPLASH_ANGLE_SPREAD_GROUND,
     SPLASH_BASE_ANGLE,
     coverRef,
   ]);
