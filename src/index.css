@@ -40,11 +40,11 @@ h3 {
 
 a {
   font-weight: 500;
-  color: #64caff;
+  color: #fff;
   text-decoration: inherit;
 }
 a:hover {
-  color: #81d8ff;
+  color: #ccc;
 }
 
 button {

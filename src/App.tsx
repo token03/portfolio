@@ -13,10 +13,42 @@ function App() {
 
       <section className="projects left-text top-margin">
         <h2 className="underlined-title">projects</h2>
-        <h3 className="small-margin">card collector app</h3>
-        <h3 className="small-margin">rhythm game classifier</h3>
-        <h3 className="small-margin">ml manga translator</h3>
-        <h3 className="small-margin">pokemon discord bot</h3>
+        <h3 className="small-margin">
+          <a
+            href="https://github.com/token03/clodlog-native"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            card collector app
+          </a>
+        </h3>
+        <h3 className="small-margin">
+          <a
+            href="https://github.com/token03/osu_oracle"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            rhythm game classifier
+          </a>
+        </h3>
+        <h3 className="small-margin">
+          <a
+            href="https://github.com/token03/kakiyomi"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            ml manga translator
+          </a>
+        </h3>
+        <h3 className="small-margin">
+          <a
+            href="https://github.com/token03/clodsire-bot"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            pokemon discord bot
+          </a>
+        </h3>
       </section>
 
       <hr className="separator top-margin" />
