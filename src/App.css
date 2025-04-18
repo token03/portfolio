@@ -2,12 +2,18 @@
   max-width: 700px;
   margin: 0 auto;
   width: 90%;
-  border: 1px solid #fff;
+  border: 1px solid #ccc;
   padding: 1.5rem;
+  margin-top: 2rem;
+  position: relative;
+  z-index: 2;
+  background-color: #222;
 }
 
-section + section {
-  margin-top: 2rem;
+hr.separator {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 2rem 0;
 }
 
 .left-text {
@@ -35,6 +41,11 @@ section + section {
   margin-top: 0;
 }
 
+.underlined-title::before {
+  content: "# ";
+  color: #888;
+}
+
 .about-me h1 {
   text-transform: lowercase;
 }
@@ -49,11 +60,11 @@ section + section {
 }
 
 .projects h3::before {
-  content: "* ";
+  content: "> ";
   color: #888;
 }
 
 .sections h3::before {
-  content: "* ";
+  content: "> ";
   color: #888;
 }
