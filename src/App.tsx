@@ -1,12 +1,15 @@
 import React, { useRef } from "react";
 import "./App.css";
 import RainEffect from "./RainEffect";
+import Clodsire from "./Clodsire";
 
 function App() {
   const mainContainerRef = useRef<HTMLDivElement>(null);
 
   return (
     <>
+      <Clodsire />
+
       <RainEffect
         coverRef={mainContainerRef as React.RefObject<HTMLDivElement>}
       />
