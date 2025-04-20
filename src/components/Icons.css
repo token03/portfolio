@@ -1,0 +1,25 @@
+.social-icons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.icon-link {
+  color: #ccc;
+  display: inline-block;
+  transition:
+    color 0.2s ease-in-out,
+    transform 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.icon-link:hover {
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.social-icons svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}

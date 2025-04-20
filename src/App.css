@@ -69,3 +69,8 @@ hr.separator {
   content: "> ";
   color: #888;
 }
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
