@@ -17,15 +17,17 @@ const FireParticles = ({
   convergenceFactor = 0.3,
   fireHeight = 1.0,
   position = [0, 0, 0],
+  timeScale = 1.0,
 }) => {
   const meshRef = useRef<THREE.Mesh>(null);
 
   const geometry = useMemo(() => {
+    // ... (geometry creation code remains the same - keep negative aStartTime) ...
     const geo = new THREE.BufferGeometry();
     const particleCount = count;
     const vertices = new Float32Array(particleCount * 3 * 3);
     const lifetimes = new Float32Array(particleCount * 3);
-    const startTimes = new Float32Array(particleCount * 3);
+    const startTimes = new Float32Array(particleCount * 3); // Will store negative offsets
     const velocities = new Float32Array(particleCount * 3 * 3);
     const baseSizes = new Float32Array(particleCount * 3);
     const vertexIndices = new Float32Array(particleCount * 3);
@@ -33,6 +35,8 @@ const FireParticles = ({
 
     for (let i = 0; i < particleCount; i++) {
       const life = lifetime * (0.5 + Math.random() * 0.5);
+      // **** CRITICAL: Keep aStartTime negative ****
+      // This negative value acts as an initial delay offset.
       const startTime = -Math.random() * life;
       const baseSize = size * (0.7 + Math.random() * 0.6);
       const angle = Math.random() * Math.PI * 2;
@@ -48,7 +52,7 @@ const FireParticles = ({
         vertices[index * 3 + 1] = 0;
         vertices[index * 3 + 2] = 0;
         lifetimes[index] = life;
-        startTimes[index] = startTime;
+        startTimes[index] = startTime; // Store the negative start time/delay
         baseSizes[index] = baseSize;
         vertexIndices[index] = j;
         velocities[index * 3 + 0] = velX;
@@ -57,6 +61,7 @@ const FireParticles = ({
         randoms[index] = randomVal;
       }
     }
+    // ... (rest of geometry setup remains the same) ...
     geo.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
     geo.setAttribute("aLifetime", new THREE.BufferAttribute(lifetimes, 1));
     geo.setAttribute("aStartTime", new THREE.BufferAttribute(startTimes, 1));
@@ -75,6 +80,7 @@ const FireParticles = ({
     () =>
       new THREE.ShaderMaterial({
         uniforms: {
+          // ... (other uniforms remain the same) ...
           uTime: { value: 0.0 },
           uBaseColor: { value: baseColor },
           uMiddleColor: { value: middleColor },
@@ -202,12 +208,13 @@ const FireParticles = ({
           }
         `,
         fragmentShader: `
+          // ... (Fragment shader remains the same - it uses vLifeProgress) ...
           uniform vec3 uBaseColor;
           uniform vec3 uMiddleColor;
           uniform vec3 uTipColor;
           uniform float uColorMidpoint;
 
-          varying float vLifeProgress;
+          varying float vLifeProgress; // Receives the 0.0 -> 1.0 value from vertex shader
 
           #define PI 3.141592653589793
 
@@ -221,18 +228,23 @@ const FireParticles = ({
               color = mix(uMiddleColor, uTipColor, (vLifeProgress - mid) / (1.0 - mid));
             }
 
+            // Alpha smoothly fades in and out using sin based on the looping progress
             float alpha = sin(vLifeProgress * PI);
 
             gl_FragColor = vec4(color, alpha);
-            gl_FragColor.a = clamp(gl_FragColor.a, 0.0, 1.0);
+            gl_FragColor.a = clamp(gl_FragColor.a, 0.0, 1.0); // Ensure alpha is valid
+            // Optional: Discard fully transparent fragments for potential minor performance gain
+            // if (gl_FragColor.a < 0.01) discard;
           }
         `,
+        // ... (rest of material properties: transparent, blending, depthWrite, side) ...
         transparent: true,
         blending: THREE.AdditiveBlending,
         depthWrite: false,
         side: THREE.DoubleSide,
       }),
     [
+      // Ensure dependencies are correct
       baseColor,
       middleColor,
       tipColor,
@@ -246,7 +258,7 @@ const FireParticles = ({
 
   useFrame(({ clock }) => {
     if (material) {
-      material.uniforms.uTime.value = clock.getElapsedTime();
+      material.uniforms.uTime.value = clock.getElapsedTime() * timeScale;
     }
   });
 
@@ -256,7 +268,7 @@ const FireParticles = ({
       position={position as [number, number, number]}
       geometry={geometry}
       material={material}
-      frustumCulled={false}
+      frustumCulled={false} // Keep this for particle systems
     />
   );
 };

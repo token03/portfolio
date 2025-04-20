@@ -137,15 +137,16 @@ function BonfireModel({
           middleColor={new THREE.Color("#ff8000")}
           tipColor={new THREE.Color("#ffee00")}
           colorMidpoint={0.35}
-          size={0.3}
-          lifetime={2.2}
+          size={0.25}
+          lifetime={2.0}
           speed={0.7}
           gravity={-0.4}
-          initialSpread={0.2}
+          initialSpread={0.15}
           baseSpreadRadius={0.1}
-          convergenceFactor={5}
+          convergenceFactor={1}
           fireHeight={0.75}
           position={[0, -0.05, 0]}
+          timeScale={0.6}
         />
       </group>
     </BaseModel>

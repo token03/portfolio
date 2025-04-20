@@ -17,7 +17,7 @@ function App() {
       <div className="main-container" ref={mainContainerRef}>
         <section className="about-me">
           <h3 className="left-text small-margin">hi im</h3>
-          <h1 className="left-text small-margin">jessie zhong</h1>
+          <h1 className="left-text small-margin">jessie</h1>
           <h3 className="left-text small-margin">third year cs @ ubc</h3>
         </section>
 
@@ -31,7 +31,7 @@ function App() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              card collector app
+              clodlog
             </a>
           </h3>
           <h3 className="small-margin">
@@ -40,7 +40,7 @@ function App() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              rhythm game classifier
+              osu!oracle
             </a>
           </h3>
           <h3 className="small-margin">
@@ -49,16 +49,16 @@ function App() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              ml manga translator
+              kakiyomi
             </a>
           </h3>
           <h3 className="small-margin">
             <a
-              href="https://github.com/token03/clodsire-bot"
+              href="https://github.com/InterviewPal/InterviewPal"
               target="_blank"
               rel="noopener noreferrer"
             >
-              pokemon discord bot
+              interviewpal
             </a>
           </h3>
         </section>

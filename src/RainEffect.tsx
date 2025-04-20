@@ -49,7 +49,7 @@ const RainEffect: React.FC<RainEffectProps> = ({ coverRef }) => {
   const MAX_LENGTH = 22;
   const MIN_DROP_WIDTH = 1.0;
   const MAX_DROP_WIDTH = 1.8;
-  const SPLASH_CHANCE = 0.4;
+  const SPLASH_CHANCE = 0.5;
   const MIN_SPLASH_LENGTH = 5;
   const MAX_SPLASH_LENGTH = 10;
   const NUM_SPLASH_LINES_MIN = 1;
@@ -72,10 +72,21 @@ const RainEffect: React.FC<RainEffectProps> = ({ coverRef }) => {
         canvasRef.current.width = window.innerWidth;
         canvasRef.current.height = window.innerHeight;
       }
+      if (coverRef.current) {
+        const newRect = coverRef.current.getBoundingClientRect();
+        coverRectRef.current = newRect;
+        setCoverRectState(newRect);
+      } else {
+        coverRectRef.current = null;
+        setCoverRectState(null);
+      }
     };
     window.addEventListener("resize", handleResize);
+
+    handleResize();
+
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [coverRef]);
 
   useEffect(() => {
     let observer: ResizeObserver | undefined;
@@ -207,7 +218,7 @@ const RainEffect: React.FC<RainEffectProps> = ({ coverRef }) => {
         }
 
         if (drop.y > canvasHeight + MAX_LENGTH) {
-          // don't remove this; for eslint
+          // blah
         } else if (hitSomething) {
           if (Math.random() <= SPLASH_CHANCE) {
             const numLines = Math.floor(
